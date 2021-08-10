@@ -1,0 +1,11 @@
+{
+  "name": "scheduler-backend",
+  "version": "0.1.10",
+  "description": "apidoc of scheduler backend",
+  "title": "ApiDoc scheduler-backend",
+  "url" : "http://localhost:8082/api",
+  "template": {
+  	"withCompare": true,
+  	"withGenerator": true
+  }
+}
