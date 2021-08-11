@@ -13,7 +13,7 @@
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
     "test:": "cross-env NODE_ENV=test mocha --exit --timeout 5000",
-    "test:watch": "npm run test:unit -- --watch",
+    "test:watch": "npm run test -- --watch",
     "apidoc": "apidoc -i src/ -o apidoc/",
     "db:create": "dotenv sequelize db:create",
     "db:migrate": "dotenv sequelize db:migrate",
