@@ -80,7 +80,7 @@ export class MeetingsRequests {
             let eventData = [];
             if (req.body.action == "insert" || (req.body.action == "batch" && req.body.added.length > 0)) {
                 (req.body.action == "insert") ? eventData.push(req.body.value) : eventData = req.body.added;
-                for (var i = 0; i < eventData.length; i++) {
+                for (let i = 0; i < eventData.length; i++) {
                     eventData[i].StartTime = new Date(eventData[i].StartTime);
                     eventData[i].EndTime = new Date(eventData[i].EndTime);
                     const meeting: Meeting = new Meeting(decapitalizeKeys(eventData[i]));
@@ -94,7 +94,7 @@ export class MeetingsRequests {
 
             if (req.body.action == "update" || (req.body.action == "batch" && req.body.changed.length > 0)) {
                 (req.body.action == "update") ? eventData.push(req.body.value) : eventData = req.body.changed;
-                for (var i = 0; i < eventData.length; i++) {
+                for (let i = 0; i < eventData.length; i++) {
                     delete eventData[i]._id;
                     eventData[i].StartTime = new Date(eventData[i].StartTime);
                     eventData[i].EndTime = new Date(eventData[i].EndTime);
@@ -102,12 +102,12 @@ export class MeetingsRequests {
                     if (!meeting.isValid()) {
                         return res.status(400).json("The meeting is not valid");
                     }
-                    await this.meetingRepository.updateMeeting(meeting.id!, meeting);
+                    await this.meetingRepository.updateMeeting(eventData[i].Id, meeting);
                 }
             }
             if (req.body.action == "remove" || (req.body.action == "batch" && req.body.deleted.length > 0)) {
                 (req.body.action == "remove") ? eventData.push(req.body.value) : eventData = req.body.deleted;
-                for (var i = 0; i < eventData.length; i++) {
+                for (let i = 0; i < eventData.length; i++) {
                     await this.meetingRepository.removeMeeting(eventData[i].Id);
                 }
             }
