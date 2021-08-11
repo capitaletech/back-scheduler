@@ -21,7 +21,6 @@ export class ZoomMeetingsRouter {
          * @apiName addZoomMeeting
          * @apiGroup ZoomMeetingsRouter
          *
-         * @apiUse meeting
          *
          * @apiError   500        Internal error
          *

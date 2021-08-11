@@ -38,7 +38,6 @@ export class MeetingsRouter {
          * @apiName getMeeting
          * @apiGroup MeetingsRouter
          *
-         * @apiUse meeting
          *
          * @apiError   404        Meeting does not exist.
          *
@@ -51,7 +50,6 @@ export class MeetingsRouter {
          * @apiGroup MeetingsRouter
          *
          * @apiSuccess {Object[]} meetings List of Meetings.
-         * @apiUse meeting
          */
         this.router.get("/", requests.getAllMeetings.bind(requests));
 
@@ -60,7 +58,6 @@ export class MeetingsRouter {
          * @apiName addMeeting
          * @apiGroup MeetingsRouter
          *
-         * @apiUse meeting
          *
          * @apiError   400        Meeting not valid error.
          * @apiError   500        Internal error
@@ -73,7 +70,6 @@ export class MeetingsRouter {
          * @apiName updateMeeting
          * @apiGroup MeetingsRouter
          *
-         * @apiUse meeting
          *
          * @apiError   404        Meeting does not exist error.
          * @apiError   500        Internal error
@@ -86,7 +82,6 @@ export class MeetingsRouter {
          * @apiName batchProcessMeetings
          * @apiGroup MeetingsRouter
          *
-         * @apiUse meeting
          *
          * @apiError   500        Internal error
          *
@@ -99,7 +94,6 @@ export class MeetingsRouter {
          * @apiGroup MeetingsRouter
          *
          * @apiSuccess {Object[]} meetings List of Meetings.
-         * @apiUse meeting
          */
         this.router.post("/data", requests.getAllMeetings.bind(requests));
 
