@@ -26,7 +26,7 @@ First, copy the .env.template content into a new .env file. Then run the followi
 `apidoc`: Generate api doc.\
 `db:create`: Create the database Scheduler.\
 `db:migrate`: Execute the migration files.\
-`db:seed`: Execute the seed files.\
+`db:seed`: Execute the seed files.
 
 Any command ending by `:watch` adds live reload to the original command.
 
