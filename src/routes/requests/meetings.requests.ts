@@ -3,10 +3,14 @@ import MeetingRepository from "../../repositories/meeting.repository";
 import Meeting, {IMeeting} from "../../models/meeting";
 import logger from "../../components/logger";
 import {capitalizeKeys, decapitalizeKeys} from "../../helpers/utils";
+import {ZoomMeetingService} from "../../services/zoom.meeting.service";
 
 export class MeetingsRequests {
 
-    constructor(private meetingRepository: MeetingRepository) {
+    constructor(
+        private meetingRepository: MeetingRepository,
+        private zoomMeetingService: ZoomMeetingService,
+    ) {
     }
 
     public async getAllMeetings(req: Request, res: Response) {
@@ -84,10 +88,11 @@ export class MeetingsRequests {
                     eventData[i].StartTime = new Date(eventData[i].StartTime);
                     eventData[i].EndTime = new Date(eventData[i].EndTime);
                     const meeting: Meeting = new Meeting(decapitalizeKeys(eventData[i]));
-
                     if (!meeting.isValid()) {
                         return res.status(400).json("The meeting is not valid");
                     }
+                    const zoomResponse = await this.zoomMeetingService.createZoomMeeting();
+                    meeting.meetingUrl = zoomResponse.data.join_url;
                     await this.meetingRepository.addMeeting(meeting);
                 }
             }

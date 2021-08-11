@@ -1,11 +1,14 @@
 import {Router} from "express";
 import {MeetingsRequests} from "./requests/meetings.requests";
 import MeetingRepository from "../repositories/meeting.repository";
+import {ZoomMeetingService} from "../services/zoom.meeting.service";
 
 export class MeetingsRouter {
     public router: Router;
 
-    constructor(private meetingRepository: MeetingRepository) {
+    constructor(
+        private meetingRepository: MeetingRepository,
+        private zoomMeetingService: ZoomMeetingService) {
         this.router = Router();
         this.init();
     }
@@ -14,7 +17,7 @@ export class MeetingsRouter {
      * @apiDefine admin Admin access only
      */
     public init() {
-        const requests = new MeetingsRequests(this.meetingRepository);
+        const requests = new MeetingsRequests(this.meetingRepository, this.zoomMeetingService);
 
 
         /**

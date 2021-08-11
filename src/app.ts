@@ -44,7 +44,7 @@ export default class App {
     private mountRoutes() {
         this.express.use(
             "/api/meetings",
-            new MeetingsRouter(this.meetingRepository).router
+            new MeetingsRouter(this.meetingRepository, this.zoomMeetingService).router
         );
         this.express.use(
             "/api/zoommeetings",
