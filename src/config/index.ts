@@ -20,5 +20,10 @@ export default {
     scheduler: {
         lunchTime: process.env.LUNCH_TIME || "13,14"
     },
+    zoom: {
+        key: process.env.ZOOM_KEY,
+        secret: process.env.ZOOM_SECRET,
+        email: process.env.ZOOM_EMAIL,
+    },
     log
 };

@@ -20,6 +20,9 @@ module.exports = {
                 endTime: {
                     type: Sequelize.DATE,
                 },
+                meetingUrl: {
+                    type: Sequelize.STRING,
+                },
                 isBlock: {
                     type: Sequelize.BOOLEAN,
                 },

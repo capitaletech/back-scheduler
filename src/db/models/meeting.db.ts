@@ -13,6 +13,9 @@ class Meeting extends Model<IMeeting> implements IMeeting {
     @Column(DataType.DATE)
     endTime!: Date;
 
+    @Column(DataType.STRING)
+    meetingUrl!: string;
+
     @Column(DataType.BOOLEAN)
     isBlock!: boolean;
 

@@ -19,6 +19,7 @@ module.exports = {
                 endTime: '2021-08-09 09:00:00',
                 isBlock: false,
                 isReadonly: false,
+                meetingUrl: 'https://us05web.zoom.us/j/84045031701?pwd=NGIzTXV2SUEzS2cxTjQzMmt4SnkrZz09',
                 createdAt: new Date(),
                 updatedAt: new Date()
             }

@@ -3,9 +3,11 @@ import http from 'http';
 import createExpressApp from './components/express';
 import logger from './components/logger';
 import {Express, NextFunction, Request, Response} from "express";
-import {MeetingsRouter} from "./routes/MeetingsRouter";
 import MeetingRepository from "./repositories/meeting.repository";
 import Database from "./db/sequelize";
+import {ZoomMeetingsRouter} from "./routes/zoom.meetings.router";
+import {MeetingsRouter} from "./routes/meetings.router";
+import {ZoomMeetingService} from "./services/zoom.meeting.service";
 
 
 export default class App {
@@ -16,6 +18,7 @@ export default class App {
     private server: http.Server;
     private readonly express: Express;
     private meetingRepository: MeetingRepository;
+    private zoomMeetingService: ZoomMeetingService;
     private readonly database: Database;
 
     constructor(conf: any) {
@@ -26,6 +29,7 @@ export default class App {
         this.server = http.createServer(this.express);
         this.database = new Database(conf.db);
         this.meetingRepository = new MeetingRepository(this.database);
+        this.zoomMeetingService = new ZoomMeetingService();
 
         this.useCors();
         this.mountRoutes();
@@ -41,6 +45,10 @@ export default class App {
         this.express.use(
             "/api/meetings",
             new MeetingsRouter(this.meetingRepository).router
+        );
+        this.express.use(
+            "/api/zoommeetings",
+            new ZoomMeetingsRouter(this.zoomMeetingService).router
         );
 
         // Catch-all route. Responds 404 if the endpoint could not be found.
@@ -60,7 +68,7 @@ export default class App {
                 if (origin === undefined || allowed.indexOf(origin) !== -1) {
                     callback(null, true);
                 } else {
-                    logger.error("Origin not allowed by CORS = ", origin);
+                    logger.error(`Origin not allowed by CORS ${origin}`);
                     callback(new Error("Not allowed by CORS"));
                 }
             },

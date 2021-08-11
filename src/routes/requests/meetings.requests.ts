@@ -1,6 +1,8 @@
 import {Request, Response} from "express";
 import MeetingRepository from "../../repositories/meeting.repository";
 import Meeting, {IMeeting} from "../../models/meeting";
+import logger from "../../components/logger";
+import {capitalizeKeys, decapitalizeKeys} from "../../helpers/utils";
 
 export class MeetingsRequests {
 
@@ -13,12 +15,7 @@ export class MeetingsRequests {
             const meetings: IMeeting[] = JSON.parse(JSON.stringify(result));
 
             // Object keys are capitalized to comply with Frontend scheduler api
-            const capsMeetings: IMeeting[] = [];
-            meetings.forEach(meeting => {
-                const entries = Object.entries(meeting);
-                const capsEntries = entries.map((entry) => [entry[0][0].toUpperCase() + entry[0].slice(1), entry[1]]);
-                capsMeetings.push(Object.fromEntries(capsEntries) as IMeeting);
-            })
+            const capsMeetings: IMeeting[] = capitalizeKeys(meetings);
             return res.json(capsMeetings);
         } catch (err) {
             return res.status(500).json(err.message);
@@ -28,7 +25,7 @@ export class MeetingsRequests {
     public async addMeeting(req: Request, res: Response) {
         const meeting = new Meeting(req.body as IMeeting);
         if (!meeting.isValid()) {
-            return res.status(400).json({err: "The meeting is not valid"});
+            return res.status(400).json("The meeting is not valid");
         }
         try {
             const result = await this.meetingRepository.addMeeting(meeting);
@@ -41,7 +38,7 @@ export class MeetingsRequests {
     public async updateMeeting(req: Request, res: Response) {
         const meeting = new Meeting(req.body as IMeeting);
         if (!meeting.isValid()) {
-            return res.status(400).json({err: "The meeting is not valid"});
+            return res.status(400).json("The meeting is not valid");
         }
         const meetingId: number = parseInt(req.params.id, 10);
         try {
@@ -55,9 +52,9 @@ export class MeetingsRequests {
     public async deleteMeeting(req: Request, res: Response) {
         const meetingId: number = parseInt(req.params.id, 10);
         try {
-            await this.meetingRepository.getMeeting(meetingId);
+            await this.meetingRepository.removeMeeting(meetingId);
         } catch (err) {
-            return res.status(404).json({err: err.message});
+            return res.status(404).json(err.message);
         }
         try {
             const result = await this.meetingRepository.removeMeeting(meetingId);
@@ -73,7 +70,51 @@ export class MeetingsRequests {
             const result = await this.meetingRepository.getMeeting(meetingId);
             return res.status(201).json(result);
         } catch (err) {
-            return res.status(404).json({err: err.message});
+            return res.status(404).json(err.message);
+        }
+    }
+
+
+    public async batchProcessMeetings(req: Request, res: Response) {
+        try {
+            let eventData = [];
+            if (req.body.action == "insert" || (req.body.action == "batch" && req.body.added.length > 0)) {
+                (req.body.action == "insert") ? eventData.push(req.body.value) : eventData = req.body.added;
+                for (var i = 0; i < eventData.length; i++) {
+                    eventData[i].StartTime = new Date(eventData[i].StartTime);
+                    eventData[i].EndTime = new Date(eventData[i].EndTime);
+                    const meeting: Meeting = new Meeting(decapitalizeKeys(eventData[i]));
+
+                    if (!meeting.isValid()) {
+                        return res.status(400).json("The meeting is not valid");
+                    }
+                    await this.meetingRepository.addMeeting(meeting);
+                }
+            }
+
+            if (req.body.action == "update" || (req.body.action == "batch" && req.body.changed.length > 0)) {
+                (req.body.action == "update") ? eventData.push(req.body.value) : eventData = req.body.changed;
+                for (var i = 0; i < eventData.length; i++) {
+                    delete eventData[i]._id;
+                    eventData[i].StartTime = new Date(eventData[i].StartTime);
+                    eventData[i].EndTime = new Date(eventData[i].EndTime);
+                    const meeting: Meeting = new Meeting(decapitalizeKeys(eventData[i]));
+                    if (!meeting.isValid()) {
+                        return res.status(400).json("The meeting is not valid");
+                    }
+                    await this.meetingRepository.updateMeeting(meeting.id!, meeting);
+                }
+            }
+            if (req.body.action == "remove" || (req.body.action == "batch" && req.body.deleted.length > 0)) {
+                (req.body.action == "remove") ? eventData.push(req.body.value) : eventData = req.body.deleted;
+                for (var i = 0; i < eventData.length; i++) {
+                    await this.meetingRepository.removeMeeting(eventData[i].Id);
+                }
+            }
+            res.send(req.body);
+        } catch (err) {
+            logger.error(err);
+            throw new Error(err.message);
         }
     }
 

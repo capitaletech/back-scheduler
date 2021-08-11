@@ -78,5 +78,27 @@ export class MeetingsRouter {
          */
         this.router.patch("/:id", requests.updateMeeting.bind(requests));
 
+        /**
+         * @api {patch} /api/meetings/batch Process CRUD operations on meetings from the scheduler
+         * @apiName batchProcessMeetings
+         * @apiGroup MeetingsRouter
+         *
+         * @apiUse meeting
+         *
+         * @apiError   500        Internal error
+         *
+         */
+        this.router.post("/batch", requests.batchProcessMeetings.bind(requests));
+
+        /**
+         * @api {get} /api/meetings/data Retrieves all the meetings to be displayed on the scheduler
+         * @apiName getData
+         * @apiGroup MeetingsRouter
+         *
+         * @apiSuccess {Object[]} meetings List of Meetings.
+         * @apiUse meeting
+         */
+        this.router.post("/data", requests.getAllMeetings.bind(requests));
+
     }
 }
