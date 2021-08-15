@@ -10,9 +10,6 @@ COPY . .
 
 COPY .env.template ./.env
 
-# Create the database then run the migrations and seeds
-RUN npm run db:init
-
 EXPOSE 8081
 
 CMD ["npm", "run", "prod"]
