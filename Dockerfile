@@ -4,11 +4,14 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
+RUN npm ci
+
 COPY . .
 
-RUN npm ci \
-    # Create the database then run the migrations and seeds.
-    && npm run db:init
+COPY .env.template ./.env
+
+# Create the database then run the migrations and seeds
+RUN npm run db:init
 
 EXPOSE 8081
 
